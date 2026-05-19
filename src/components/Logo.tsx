@@ -1,16 +1,18 @@
 import Image from 'next/image'
 
-export default function Logo({ size = 'md', showText = false }: { size?: 'sm' | 'md' | 'lg'; showText?: boolean }) {
+export default function Logo({ size = 'md', showText = false }: { size?: 'sm' | 'md' | 'lg' | 'xl'; showText?: boolean }) {
   const sizes = {
     sm: { width: 40, height: 40 },
     md: { width: 60, height: 60 },
-    lg: { width: 80, height: 80 }
+    lg: { width: 80, height: 80 },
+    xl: { width: 144, height: 144 }
   }
 
   const textSize = {
     sm: 'text-xs',
     md: 'text-sm',
-    lg: 'text-base'
+    lg: 'text-base',
+    xl: 'text-lg'
   }
 
   return (
