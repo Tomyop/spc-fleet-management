@@ -15,6 +15,7 @@ export default function ReservationPage() {
   const [selectedVehicle, setSelectedVehicle] = useState<any>(null)
   const [showVehicleModal, setShowVehicleModal] = useState(false)
   const [purpose, setPurpose] = useState('')
+  const [selectedStatus, setSelectedStatus] = useState('')
   const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null)
 
   const currentUser = typeof window !== 'undefined' ? localStorage.getItem('spc_user') : ''
@@ -56,46 +57,55 @@ export default function ReservationPage() {
   }
 
   const handleVehicleSelect = (vehicle: any) => {
-    if (!selectedDate || !selectedTime || !purpose) {
-      setToast({ message: 'يرجى ملء التاريخ والوقت والغرض قبل اختيار المركبة', type: 'warning' })
+    if (!selectedDate || !selectedTime) {
+      setToast({ message: 'يرجى ملء التاريخ والوقت قبل اختيار المركبة', type: 'warning' })
       return
     }
 
     setSelectedVehicle(vehicle)
     setShowVehicleModal(false)
+  }
 
-    // Auto-save reservation to localStorage
+  const handleSaveReservation = () => {
+    if (!selectedDate || !selectedTime || !selectedVehicle || !selectedStatus) {
+      setToast({ message: 'يرجى ملء جميع الحقول المطلوبة', type: 'warning' })
+      return
+    }
+
+    // Save reservation to localStorage
     const reservations = JSON.parse(localStorage.getItem('reservations') || '[]')
     const newReservation = {
       id: Date.now().toString(),
       userName: currentUser,
-      vehicleType: vehicle.type,
-      vehiclePlate: vehicle.plateNumber,
+      vehicleType: selectedVehicle.type,
+      vehiclePlate: selectedVehicle.plateNumber,
       date: selectedDate,
       time: selectedTime,
-      purpose,
-      status: 'نشط',
+      purpose: selectedStatus,
+      status: selectedStatus,
       createdAt: new Date().toISOString()
     }
     reservations.push(newReservation)
     localStorage.setItem('reservations', JSON.stringify(reservations))
 
-    // Update vehicle status
-    const vehicles = JSON.parse(localStorage.getItem('vehicles') || JSON.stringify(initialVehicles))
+    // Update vehicle status based on selected status
+    const vehicles = JSON.parse(localStorage.getItem('spc_vehicles') || JSON.stringify(initialVehicles))
+    const targetVehicle = vehicles.find((v: any) => v.id === selectedVehicle.id)
+    const oldStatus = targetVehicle?.status || null
+    
     const updatedVehicles = vehicles.map((v: any) => 
-      v.id === vehicle.id 
-        ? { ...v, status: 'محجوزة', available: false }
+      v.id === selectedVehicle.id 
+        ? { ...v, status: selectedStatus, available: false }
         : v
     )
-    localStorage.setItem('vehicles', JSON.stringify(updatedVehicles))
+    localStorage.setItem('spc_vehicles', JSON.stringify(updatedVehicles))
 
     // Update today's movements counter
     const entries = JSON.parse(localStorage.getItem('entries') || '[]')
-    const today = new Date().toDateString()
     const todayEntry = {
       id: Date.now().toString(),
       employeeName: currentUser,
-      vehiclePlate: vehicle.plateNumber,
+      vehiclePlate: selectedVehicle.plateNumber,
       type: 'حجز',
       timestamp: new Date().toISOString()
     }
@@ -213,18 +223,42 @@ export default function ReservationPage() {
                 </button>
               )}
 
-              {/* Purpose */}
-              <div className="space-y-2">
-                <label className="text-white font-semibold">الغرض من الحجز</label>
-                <textarea
-                  value={purpose}
-                  onChange={(e) => setPurpose(e.target.value)}
-                  placeholder="اكتب الغرض من الحجز هنا..."
-                  className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all hover:border-blue-500/50 resize-none"
-                  rows={3}
-                  required
-                />
-              </div>
+              {/* Purpose - Only show after vehicle is selected */}
+              {selectedVehicle && (
+                <div className="space-y-2">
+                  <label className="text-white font-semibold">الغرض من الحجز</label>
+                  <div className="relative">
+                    <select
+                      value={selectedStatus}
+                      onChange={(e) => setSelectedStatus(e.target.value)}
+                      className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all appearance-none cursor-pointer"
+                      required
+                    >
+                      <option value="" className="bg-gray-800">اختر الحالة</option>
+                      <option value="محجوزة" className="bg-gray-800">محجوزة</option>
+                      <option value="داخل العمل" className="bg-gray-800">داخل العمل</option>
+                      <option value="خارج العمل" className="bg-gray-800">خارج العمل</option>
+                      <option value="صيانة" className="bg-gray-800">صيانة</option>
+                    </select>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                      <svg width="12" height="8" viewBox="0 0 12 8" fill="none" className="text-gray-400">
+                        <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Save Button - Only show after status is selected */}
+              {selectedVehicle && selectedStatus && (
+                <button
+                  type="button"
+                  onClick={handleSaveReservation}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                >
+                  حفظ / تخزين
+                </button>
+              )}
             </div>
           </div>
         </div>

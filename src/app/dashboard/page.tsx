@@ -21,11 +21,41 @@ export default function Dashboard() {
     }
   }, [])
 
+  // Listen for localStorage changes to update data dynamically
+  useEffect(() => {
+    const handleStorageChange = () => {
+      if (typeof window !== 'undefined') {
+        const savedReservations = localStorage.getItem('reservations')
+        if (savedReservations) {
+          setLocalReservations(JSON.parse(savedReservations))
+        }
+      }
+    }
+
+    window.addEventListener('storage', handleStorageChange)
+    return () => window.removeEventListener('storage', handleStorageChange)
+  }, [])
+
   const handleCancelReservation = (id: string) => {
+    const reservation = localReservations.find((r: any) => r.id === id)
     const updatedReservations = localReservations.filter((r: any) => r.id !== id)
     setLocalReservations(updatedReservations)
     if (typeof window !== 'undefined') {
       localStorage.setItem('reservations', JSON.stringify(updatedReservations))
+      
+      // Update vehicle status to 'خارج العمل' when reservation is cancelled
+      if (reservation) {
+        const vehicles = JSON.parse(localStorage.getItem('spc_vehicles') || '[]')
+        const targetVehicle = vehicles.find((v: any) => v.plateNumber === reservation.vehiclePlate)
+        const oldStatus = targetVehicle?.status || null
+        
+        const updatedVehicles = vehicles.map((v: any) => 
+          v.plateNumber === reservation.vehiclePlate 
+            ? { ...v, status: 'خارج العمل', available: true }
+            : v
+        )
+        localStorage.setItem('spc_vehicles', JSON.stringify(updatedVehicles))
+      }
     }
   }
 
@@ -169,13 +199,21 @@ export default function Dashboard() {
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
                     <p className="text-white font-bold text-lg mb-1">{reservation.vehiclePlate}</p>
-                    <p className="text-gray-300 text-sm mb-1">{reservation.vehicleType || reservation.purpose}</p>
+                    <p className="text-gray-300 text-sm mb-1">{reservation.vehicleType}</p>
                     <p className="text-gray-500 text-xs">{reservation.userName}</p>
                   </div>
                   <div className="text-left ml-4">
                     <p className="text-blue-400 font-semibold">{reservation.date}</p>
                     <p className="text-gray-400 text-xs">{reservation.time}</p>
-                    <span className="inline-block mt-1 px-2 py-0.5 bg-purple-500/20 text-purple-400 text-xs rounded-full border border-purple-500/30">
+                    <span className={`inline-block mt-1 px-2 py-0.5 text-xs rounded-full border ${
+                      reservation.status === 'داخل العمل'
+                        ? 'bg-green-500/20 text-green-400 border-green-500/30'
+                        : reservation.status === 'خارج العمل'
+                        ? 'bg-orange-500/20 text-orange-400 border-orange-500/30'
+                        : reservation.status === 'صيانة'
+                        ? 'bg-red-500/20 text-red-400 border-red-500/30'
+                        : 'bg-purple-500/20 text-purple-400 border-purple-500/30'
+                    }`}>
                       {reservation.status || 'نشط'}
                     </span>
                   </div>
@@ -202,7 +240,7 @@ export default function Dashboard() {
           نظرة عامة على حالة المركبات
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {vehicles.slice(0, 10).map((vehicle) => (
+          {vehicles.filter(v => v.status !== null).slice(0, 10).map((vehicle) => (
             <div
               key={vehicle.id}
               className="bg-gray-700/50 rounded-lg p-4 hover:bg-gray-600/50 hover:border-blue-500/30 border border-transparent transition-all duration-300 cursor-pointer hover:scale-105 group"
