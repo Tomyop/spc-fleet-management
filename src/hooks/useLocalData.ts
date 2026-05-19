@@ -8,13 +8,18 @@ export function useVehicles() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Simulate loading delay
-    const timer = setTimeout(() => {
-      setVehicles(initialVehicles)
-      setLoading(false)
-    }, 500)
-    return () => clearTimeout(timer)
+    if (typeof window !== 'undefined') {
+      const savedVehicles = localStorage.getItem('spc_vehicles')
+      setVehicles(savedVehicles ? JSON.parse(savedVehicles) : initialVehicles)
+    }
+    setLoading(false)
   }, [])
+
+  useEffect(() => {
+    if (!loading && typeof window !== 'undefined') {
+      localStorage.setItem('spc_vehicles', JSON.stringify(vehicles))
+    }
+  }, [vehicles, loading])
 
   const addVehicle = async (vehicle: any) => {
     const newVehicle = {
@@ -33,7 +38,16 @@ export function useVehicles() {
     setVehicles(vehicles.filter(v => v.id !== id))
   }
 
-  return { vehicles, loading, addVehicle, updateVehicle, deleteVehicle }
+  // Computed statistics
+  const stats = {
+    total: vehicles.length,
+    inService: vehicles.filter(v => v.status === 'داخل العمل').length,
+    outOfService: vehicles.filter(v => v.status === 'خارج العمل').length,
+    reserved: vehicles.filter(v => v.status === 'محجوزة').length,
+    maintenance: vehicles.filter(v => v.status === 'صيانة').length,
+  }
+
+  return { vehicles, loading, addVehicle, updateVehicle, deleteVehicle, stats }
 }
 
 export function useEntryExit() {

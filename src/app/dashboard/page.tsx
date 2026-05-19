@@ -7,56 +7,60 @@ import { Car, ArrowRightLeft, Calendar, AlertTriangle, CheckCircle, Clock, Plus,
 
 export default function Dashboard() {
   const router = useRouter()
-  const { vehicles } = useVehicles()
+  const { vehicles, stats } = useVehicles()
   const { entries } = useEntryExit()
   const { reservations, deleteReservation } = useReservations()
   const [localReservations, setLocalReservations] = useState<any[]>([])
 
   useEffect(() => {
-    const savedReservations = localStorage.getItem('reservations')
-    if (savedReservations) {
-      setLocalReservations(JSON.parse(savedReservations))
+    if (typeof window !== 'undefined') {
+      const savedReservations = localStorage.getItem('reservations')
+      if (savedReservations) {
+        setLocalReservations(JSON.parse(savedReservations))
+      }
     }
   }, [])
 
   const handleCancelReservation = (id: string) => {
     const updatedReservations = localReservations.filter((r: any) => r.id !== id)
     setLocalReservations(updatedReservations)
-    localStorage.setItem('reservations', JSON.stringify(updatedReservations))
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('reservations', JSON.stringify(updatedReservations))
+    }
   }
 
-  const stats = [
+  const dashboardStats = [
     {
       title: 'إجمالي المركبات',
-      value: vehicles.length,
+      value: stats.total,
       icon: Car,
       color: 'bg-blue-600',
       description: 'مركبة مسجلة'
     },
     {
       title: 'داخل العمل',
-      value: 0,
+      value: stats.inService,
       icon: CheckCircle,
       color: 'bg-green-600',
       description: 'مركبة نشطة'
     },
     {
       title: 'خارج العمل',
-      value: 0,
+      value: stats.outOfService,
       icon: Clock,
       color: 'bg-orange-600',
       description: 'مركبة غير نشطة'
     },
     {
       title: 'محجوزة',
-      value: 0,
+      value: stats.reserved,
       icon: Calendar,
       color: 'bg-purple-600',
       description: 'مركبة محجوزة'
     },
     {
       title: 'صيانة',
-      value: 0,
+      value: stats.maintenance,
       icon: AlertTriangle,
       color: 'bg-red-600',
       description: 'مركبة بالصيانة'
@@ -85,7 +89,7 @@ export default function Dashboard() {
 
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {stats.map((stat, index) => {
+        {dashboardStats.map((stat, index) => {
           const Icon = stat.icon
           return (
             <div

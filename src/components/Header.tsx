@@ -1,10 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import Logo from './Logo'
-import { User } from 'lucide-react'
+import { User, LogOut } from 'lucide-react'
 
 export default function Header({ title }: { title: string }) {
+  const router = useRouter()
   const [currentUser, setCurrentUser] = useState<string>('')
   const [currentTime, setCurrentTime] = useState({
     day: '',
@@ -13,8 +15,17 @@ export default function Header({ title }: { title: string }) {
   })
 
   useEffect(() => {
-    setCurrentUser(localStorage.getItem('spc_user') || '')
+    if (typeof window !== 'undefined') {
+      setCurrentUser(localStorage.getItem('spc_user') || '')
+    }
   }, [])
+
+  const handleLogout = () => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('spc_user')
+    }
+    router.push('/')
+  }
 
   useEffect(() => {
     const updateDateTime = () => {
@@ -48,6 +59,13 @@ export default function Header({ title }: { title: string }) {
               <span className="text-white font-semibold">{currentUser}</span>
             </div>
           )}
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-xl transition-all duration-300"
+          >
+            <LogOut size={20} />
+            <span>تسجيل الخروج</span>
+          </button>
           <Logo size="lg" showText={false} />
         </div>
       </div>

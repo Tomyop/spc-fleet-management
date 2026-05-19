@@ -19,19 +19,30 @@ import { db } from '@/firebase/firebaseConfig'
 export function useVehicles() {
   const [vehicles, setVehicles] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const q = query(collection(db, 'vehicles'), orderBy('createdAt', 'desc'))
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const vehiclesData = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }))
-      setVehicles(vehiclesData)
-      setLoading(false)
-    })
+    try {
+      const q = query(collection(db, 'vehicles'), orderBy('createdAt', 'desc'))
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const vehiclesData = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }))
+        setVehicles(vehiclesData)
+        setLoading(false)
+      }, (err) => {
+        console.error('Firebase vehicles error:', err)
+        setError(err.message)
+        setLoading(false)
+      })
 
-    return () => unsubscribe()
+      return () => unsubscribe()
+    } catch (err) {
+      console.error('Firebase vehicles setup error:', err)
+      setError(err instanceof Error ? err.message : 'Unknown error')
+      setLoading(false)
+    }
   }, [])
 
   const addVehicle = async (vehicle: any) => {
@@ -55,19 +66,30 @@ export function useVehicles() {
 export function useEntryExit() {
   const [entries, setEntries] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const q = query(collection(db, 'entryExit'), orderBy('timestamp', 'desc'))
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const entriesData = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }))
-      setEntries(entriesData)
-      setLoading(false)
-    })
+    try {
+      const q = query(collection(db, 'entryExit'), orderBy('timestamp', 'desc'))
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const entriesData = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }))
+        setEntries(entriesData)
+        setLoading(false)
+      }, (err) => {
+        console.error('Firebase entry/exit error:', err)
+        setError(err.message)
+        setLoading(false)
+      })
 
-    return () => unsubscribe()
+      return () => unsubscribe()
+    } catch (err) {
+      console.error('Firebase entry/exit setup error:', err)
+      setError(err instanceof Error ? err.message : 'Unknown error')
+      setLoading(false)
+    }
   }, [])
 
   const addEntry = async (entry: any) => {
@@ -83,19 +105,30 @@ export function useEntryExit() {
 export function useReservations() {
   const [reservations, setReservations] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const q = query(collection(db, 'reservations'), orderBy('date', 'desc'))
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const reservationsData = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }))
-      setReservations(reservationsData)
-      setLoading(false)
-    })
+    try {
+      const q = query(collection(db, 'reservations'), orderBy('date', 'desc'))
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const reservationsData = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }))
+        setReservations(reservationsData)
+        setLoading(false)
+      }, (err) => {
+        console.error('Firebase reservations error:', err)
+        setError(err.message)
+        setLoading(false)
+      })
 
-    return () => unsubscribe()
+      return () => unsubscribe()
+    } catch (err) {
+      console.error('Firebase reservations setup error:', err)
+      setError(err instanceof Error ? err.message : 'Unknown error')
+      setLoading(false)
+    }
   }, [])
 
   const addReservation = async (reservation: any) => {
@@ -119,19 +152,30 @@ export function useReservations() {
 export function useInventory() {
   const [inventory, setInventory] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const q = query(collection(db, 'inventory'), orderBy('name'))
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const inventoryData = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }))
-      setInventory(inventoryData)
-      setLoading(false)
-    })
+    try {
+      const q = query(collection(db, 'inventory'), orderBy('name'))
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const inventoryData = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }))
+        setInventory(inventoryData)
+        setLoading(false)
+      }, (err) => {
+        console.error('Firebase inventory error:', err)
+        setError(err.message)
+        setLoading(false)
+      })
 
-    return () => unsubscribe()
+      return () => unsubscribe()
+    } catch (err) {
+      console.error('Firebase inventory setup error:', err)
+      setError(err instanceof Error ? err.message : 'Unknown error')
+      setLoading(false)
+    }
   }, [])
 
   const addItem = async (item: any) => {
@@ -155,19 +199,30 @@ export function useInventory() {
 export function useNotes() {
   const [notes, setNotes] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const q = query(collection(db, 'notes'), orderBy('createdAt', 'desc'))
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const notesData = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }))
-      setNotes(notesData)
-      setLoading(false)
-    })
+    try {
+      const q = query(collection(db, 'notes'), orderBy('createdAt', 'desc'))
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const notesData = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }))
+        setNotes(notesData)
+        setLoading(false)
+      }, (err) => {
+        console.error('Firebase notes error:', err)
+        setError(err.message)
+        setLoading(false)
+      })
 
-    return () => unsubscribe()
+      return () => unsubscribe()
+    } catch (err) {
+      console.error('Firebase notes setup error:', err)
+      setError(err instanceof Error ? err.message : 'Unknown error')
+      setLoading(false)
+    }
   }, [])
 
   const addNote = async (note: any) => {

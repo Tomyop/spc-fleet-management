@@ -10,14 +10,18 @@ export default function UserSelection() {
   const [selectedUser, setSelectedUser] = useState<string | null>(null)
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('spc_user')
-    if (savedUser) {
-      router.push('/dashboard')
+    if (typeof window !== 'undefined') {
+      const savedUser = localStorage.getItem('spc_user')
+      if (savedUser) {
+        router.push('/dashboard')
+      }
     }
   }, [router])
 
   const handleUserSelect = (userName: string) => {
-    localStorage.setItem('spc_user', userName)
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('spc_user', userName)
+    }
     router.push('/dashboard')
   }
 

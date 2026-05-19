@@ -30,11 +30,15 @@ export default function Sidebar() {
   const [currentUser, setCurrentUser] = useState<string>('')
 
   useState(() => {
-    setCurrentUser(localStorage.getItem('spc_user') || '')
+    if (typeof window !== 'undefined') {
+      setCurrentUser(localStorage.getItem('spc_user') || '')
+    }
   })
 
   const handleLogout = () => {
-    localStorage.removeItem('spc_user')
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('spc_user')
+    }
     router.push('/')
   }
 
