@@ -7,7 +7,7 @@ export const initialVehicles = [
     color: 'أبيض',
     ownership: 'SPC',
     chassisNumber: 'MALPB812EPM294350',
-    status: 'داخل العمل',
+    status: null,
     available: true,
     createdAt: new Date().toISOString()
   },
@@ -19,7 +19,7 @@ export const initialVehicles = [
     color: 'أبيض',
     ownership: 'SPC',
     chassisNumber: 'MALPB812EPM290301',
-    status: 'داخل العمل',
+    status: null,
     available: true,
     createdAt: new Date().toISOString()
   },
@@ -31,8 +31,8 @@ export const initialVehicles = [
     color: 'أبيض',
     ownership: 'SPC',
     chassisNumber: 'MF3PB812ESJ144885',
-    status: 'محجوزة',
-    available: false,
+    status: null,
+    available: true,
     createdAt: new Date().toISOString()
   },
   {
@@ -43,7 +43,7 @@ export const initialVehicles = [
     color: 'أبيض',
     ownership: 'SPC',
     chassisNumber: 'KMHJB81DBNU127099',
-    status: 'داخل العمل',
+    status: null,
     available: true,
     createdAt: new Date().toISOString()
   },
@@ -55,7 +55,7 @@ export const initialVehicles = [
     color: 'أبيض',
     ownership: 'SPC',
     chassisNumber: 'KMHJB81DBNU216228',
-    status: 'داخل العمل',
+    status: null,
     available: true,
     createdAt: new Date().toISOString()
   },
@@ -67,8 +67,8 @@ export const initialVehicles = [
     color: 'رمادي',
     ownership: 'SPC',
     chassisNumber: 'KMHS381FDLU206088',
-    status: 'خارج العمل',
-    available: false,
+    status: null,
+    available: true,
     createdAt: new Date().toISOString()
   },
   {
@@ -79,7 +79,7 @@ export const initialVehicles = [
     color: 'رمادي',
     ownership: 'SPC',
     chassisNumber: 'KMHST8ICDJU842664',
-    status: 'داخل العمل',
+    status: null,
     available: true,
     createdAt: new Date().toISOString()
   },
@@ -91,8 +91,8 @@ export const initialVehicles = [
     color: 'أبيض',
     ownership: 'SPC',
     chassisNumber: 'KMJWA37RAFU706901',
-    status: 'صيانة',
-    available: false,
+    status: null,
+    available: true,
     createdAt: new Date().toISOString()
   },
   {
@@ -103,7 +103,7 @@ export const initialVehicles = [
     color: 'أبيض',
     ownership: 'SPC',
     chassisNumber: 'JTMHX01J6M4228301',
-    status: 'داخل العمل',
+    status: null,
     available: true,
     createdAt: new Date().toISOString()
   },
@@ -115,8 +115,8 @@ export const initialVehicles = [
     color: 'أبيض',
     ownership: 'SPC',
     chassisNumber: 'JTMHX01J4M4228295',
-    status: 'خارج العمل',
-    available: false,
+    status: null,
+    available: true,
     createdAt: new Date().toISOString()
   }
 ]
@@ -132,5 +132,5 @@ export const vehicleTypes = [
 export const users = [
   { id: '1', name: 'ضابط العمليات مراد' },
   { id: '2', name: 'ضابط العمليات وائل' },
-  { id: '3', name: 'لوحة التحكم' }
+  { id: '3', name: 'غرفة التحكم' }
 ]

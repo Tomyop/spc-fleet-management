@@ -15,6 +15,18 @@ export function useVehicles() {
     setLoading(false)
   }, [])
 
+  // Listen for localStorage changes to update vehicles dynamically
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'spc_vehicles' && e.newValue) {
+        setVehicles(JSON.parse(e.newValue))
+      }
+    }
+
+    window.addEventListener('storage', handleStorageChange)
+    return () => window.removeEventListener('storage', handleStorageChange)
+  }, [])
+
   useEffect(() => {
     if (!loading && typeof window !== 'undefined') {
       localStorage.setItem('spc_vehicles', JSON.stringify(vehicles))
@@ -38,9 +50,9 @@ export function useVehicles() {
     setVehicles(vehicles.filter(v => v.id !== id))
   }
 
-  // Computed statistics
+  // Computed statistics - only count vehicles with actual operations
   const stats = {
-    total: vehicles.length,
+    total: vehicles.filter(v => v.status !== null).length,
     inService: vehicles.filter(v => v.status === 'داخل العمل').length,
     outOfService: vehicles.filter(v => v.status === 'خارج العمل').length,
     reserved: vehicles.filter(v => v.status === 'محجوزة').length,

@@ -66,7 +66,6 @@ export default function Header({ title }: { title: string }) {
             <LogOut size={20} />
             <span>تسجيل الخروج</span>
           </button>
-          <Logo size="lg" showText={false} />
         </div>
       </div>
     </header>
