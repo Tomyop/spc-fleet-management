@@ -6,6 +6,7 @@ import { Calendar, Clock, Car, ArrowRight, X, Truck, Bus } from 'lucide-react'
 import { initialVehicles, vehicleTypes } from '@/data/vehicles'
 import Header from '@/components/Header'
 import Toast, { ToastType } from '@/components/Toast'
+import { logActivity } from '@/lib/logActivity'
 
 export default function ReservationPage() {
   const router = useRouter()
@@ -24,7 +25,7 @@ export default function ReservationPage() {
     ? initialVehicles.filter(v => v.type === selectedVehicleType)
     : []
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string | null) => {
     switch (status) {
       case 'داخل العمل':
         return 'bg-green-500/20 text-green-400 border-green-500/30'
@@ -66,7 +67,7 @@ export default function ReservationPage() {
     setShowVehicleModal(false)
   }
 
-  const handleSaveReservation = () => {
+  const handleSaveReservation = async () => {
     if (!selectedDate || !selectedTime || !selectedVehicle || !selectedStatus) {
       setToast({ message: 'يرجى ملء جميع الحقول المطلوبة', type: 'warning' })
       return
@@ -111,6 +112,22 @@ export default function ReservationPage() {
     }
     entries.push(todayEntry)
     localStorage.setItem('entries', JSON.stringify(entries))
+    try {
+      const user = currentUser || (typeof window !== 'undefined' ? localStorage.getItem('spc_user') : '')
+      const dept = typeof window !== 'undefined' ? localStorage.getItem('spc_department') : ''
+      await logActivity(
+        'حجز مركبة',
+        selectedVehicle.plateNumber,
+        selectedVehicle.type,
+        user || '',
+        dept || '',
+        selectedStatus,
+        purpose || ''
+      )
+      console.info('[Reservation] Logged activity for reservation', selectedVehicle.plateNumber)
+    } catch (err) {
+      console.error('[Reservation] Failed to log activity', err)
+    }
 
     setToast({ message: 'تم إنشاء الحجز بنجاح!', type: 'success' })
     setTimeout(() => router.push('/dashboard'), 1500)

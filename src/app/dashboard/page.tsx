@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useVehicles, useEntryExit, useReservations } from '@/hooks/useLocalData'
 import { Car, ArrowRightLeft, Calendar, AlertTriangle, CheckCircle, Clock, Plus, X } from 'lucide-react'
+import { logActivity } from '@/lib/logActivity'
 
 export default function Dashboard() {
   const router = useRouter()
@@ -36,7 +37,7 @@ export default function Dashboard() {
     return () => window.removeEventListener('storage', handleStorageChange)
   }, [])
 
-  const handleCancelReservation = (id: string) => {
+  const handleCancelReservation = async (id: string) => {
     const reservation = localReservations.find((r: any) => r.id === id)
     const updatedReservations = localReservations.filter((r: any) => r.id !== id)
     setLocalReservations(updatedReservations)
@@ -55,6 +56,23 @@ export default function Dashboard() {
             : v
         )
         localStorage.setItem('spc_vehicles', JSON.stringify(updatedVehicles))
+
+        try {
+          const user = localStorage.getItem('spc_user') || ''
+          const dept = localStorage.getItem('spc_department') || ''
+          await logActivity(
+            'إلغاء حجز',
+            reservation.vehiclePlate,
+            reservation.vehicleType,
+            user,
+            dept,
+            'ملغى',
+            ''
+          )
+          console.info('[Dashboard] Logged cancellation for', reservation.vehiclePlate)
+        } catch (e) {
+          console.error('[Dashboard] Failed to log cancellation', e)
+        }
       }
     }
   }

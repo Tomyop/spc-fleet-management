@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Initialize Vehicles - LocalStorage</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            direction: rtl;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+        #log {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: monospace;
+        }
+        .success { color: #4CAF50; font-weight: bold; }
+        .error { color: #f44336; font-weight: bold; }
+        .info { color: #2196F3; }
+        .warning { color: #ff9800; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>إضافة المركبات إلى النظام</h1>
+        <p>هذه الصفحة تضيف المركبات الافتراضية إلى localStorage مع الحالات الحالية من Dashboard</p>
+        <button onclick="initVehicles()">إضافة المركبات</button>
+        <div id="log"></div>
+    </div>
+
+    <script>
+        const vehicles = [
+            {
+                id: '1',
+                plateNumber: '5-2621633',
+                type: 'Hyundai Tucson',
+                year: 2021,
+                color: 'أبيض',
+                ownership: 'SPC',
+                chassisNumber: 'KMHJB81DBNU216228',
+                status: 'داخل العمل',
+                available: true,
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: '2',
+                plateNumber: '5-2622144',
+                type: 'Hyundai Tucson',
+                year: 2021,
+                color: 'أبيض',
+                ownership: 'SPC',
+                chassisNumber: 'KMHJB81DBNU127099',
+                status: 'داخل العمل',
+                available: true,
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: '3',
+                plateNumber: '5-2970154',
+                type: 'Hyundai Creta',
+                year: 2024,
+                color: 'أبيض',
+                ownership: 'SPC',
+                chassisNumber: 'MF3PB812ESJ144885',
+                status: 'محجوزة',
+                available: false,
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: '4',
+                plateNumber: '5-2882336',
+                type: 'Hyundai Creta',
+                year: 2023,
+                color: 'أبيض',
+                ownership: 'SPC',
+                chassisNumber: 'MALPB812EPM290301',
+                status: 'داخل العمل',
+                available: true,
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: '5',
+                plateNumber: '5-2718951',
+                type: 'Hyundai Creta',
+                year: 2023,
+                color: 'أبيض',
+                ownership: 'SPC',
+                chassisNumber: 'MALPB812EPM294350',
+                status: 'داخل العمل',
+                available: true,
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: '6',
+                plateNumber: '5-2417421',
+                type: 'TLC B6',
+                year: 2021,
+                color: 'أبيض',
+                ownership: 'SPC',
+                chassisNumber: 'JTMHX01J4M4228295',
+                status: 'خارج العمل',
+                available: false,
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: '7',
+                plateNumber: '5-2417413',
+                type: 'TLC B6',
+                year: 2021,
+                color: 'أبيض',
+                ownership: 'SPC',
+                chassisNumber: 'JTMHX01J6M4228301',
+                status: 'صيانة',
+                available: false,
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: '8',
+                plateNumber: '5-2882682',
+                type: 'Hyundai H1',
+                year: 2014,
+                color: 'أبيض',
+                ownership: 'SPC',
+                chassisNumber: 'KMJWA37RAFU706901',
+                status: 'صيانة',
+                available: false,
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: '9',
+                plateNumber: '5-2547657',
+                type: 'Hyundai Santa Fe',
+                year: 2018,
+                color: 'رمادي',
+                ownership: 'SPC',
+                chassisNumber: 'KMHST8ICDJU842664',
+                status: 'داخل العمل',
+                available: true,
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: '10',
+                plateNumber: '5-2549379',
+                type: 'Hyundai Santa Fe',
+                year: 2019,
+                color: 'رمادي',
+                ownership: 'SPC',
+                chassisNumber: 'KMHS381FDLU206088',
+                status: 'خارج العمل',
+                available: false,
+                createdAt: new Date().toISOString()
+            }
+        ];
+
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const p = document.createElement('p');
+            p.className = type;
+            p.textContent = message;
+            logDiv.appendChild(p);
+        }
+
+        function initVehicles() {
+            try {
+                log('بدء إضافة المركبات إلى localStorage...', 'info');
+                
+                // Clear existing vehicles
+                localStorage.removeItem('spc_vehicles');
+                log('تم مسح البيانات القديمة', 'warning');
+                
+                // Add new vehicles
+                localStorage.setItem('spc_vehicles', JSON.stringify(vehicles));
+                log(`تمت إضافة ${vehicles.length} مركبة بنجاح!`, 'success');
+                
+                // Display added vehicles
+                log('\nالمركبات المضافة:', 'info');
+                vehicles.forEach(v => {
+                    log(`- ${v.plateNumber} | ${v.type} | ${v.status} | متاحة: ${v.available}`, 'info');
+                });
+                
+                log('\nيمكنك الآن الانتقال إلى صفحة الحجز!', 'success');
+                
+                // Redirect after 3 seconds
+                setTimeout(() => {
+                    window.location.href = '/reservation';
+                }, 3000);
+                
+            } catch (error) {
+                log(`خطأ: ${error.message}`, 'error');
+                console.error('Error initializing vehicles:', error);
+            }
+        }
+    </script>
+</body>
+</html>

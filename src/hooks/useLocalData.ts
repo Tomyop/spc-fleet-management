@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { initialVehicles } from '@/data/vehicles'
+import { logActivity } from '@/lib/logActivity'
 
 export function useVehicles() {
   const [vehicles, setVehicles] = useState<any[]>([])
@@ -43,7 +44,23 @@ export function useVehicles() {
   }
 
   const updateVehicle = async (id: string, vehicle: any) => {
-    setVehicles(vehicles.map(v => v.id === id ? { ...v, ...vehicle } : v))
+    const newVehicles = vehicles.map(v => v.id === id ? { ...v, ...vehicle } : v)
+    setVehicles(newVehicles)
+    try {
+      const updated = newVehicles.find(v => v.id === id)
+      const user = typeof window !== 'undefined' ? localStorage.getItem('spc_user') : ''
+      await logActivity(
+        'تحديث بيانات مركبة',
+        updated?.plateNumber || id,
+        updated?.type || null,
+        user || null,
+        null,
+        updated?.status || null,
+        JSON.stringify(vehicle)
+      )
+    } catch (e) {
+      console.error('[useLocalData] Failed to log vehicle update', e)
+    }
   }
 
   const deleteVehicle = async (id: string) => {
@@ -82,6 +99,20 @@ export function useEntryExit() {
       timestamp: new Date().toISOString()
     }
     setEntries([newEntry, ...entries])
+    try {
+      const user = typeof window !== 'undefined' ? localStorage.getItem('spc_user') : ''
+      await logActivity(
+        newEntry.type || 'دخول/خروج',
+        newEntry.vehiclePlate || null,
+        newEntry.vehicleType || null,
+        user || null,
+        null,
+        newEntry.type || null,
+        newEntry.notes || null
+      )
+    } catch (e) {
+      console.error('[useLocalData] Failed to log entry activity', e)
+    }
   }
 
   return { entries, loading, addEntry }
@@ -107,6 +138,19 @@ export function useReservations() {
       createdAt: new Date().toISOString()
     }
     setReservations([newReservation, ...reservations])
+    try {
+      await logActivity(
+        'حجز مركبة',
+        newReservation.vehiclePlate || null,
+        newReservation.vehicleType || null,
+        newReservation.userName || null,
+        null,
+        newReservation.status || null,
+        newReservation.purpose || null
+      )
+    } catch (e) {
+      console.error('[useLocalData] Failed to log reservation', e)
+    }
   }
 
   const updateReservation = async (id: string, data: any) => {
@@ -114,7 +158,23 @@ export function useReservations() {
   }
 
   const deleteReservation = async (id: string) => {
+    const target = reservations.find(r => r.id === id)
     setReservations(reservations.filter(r => r.id !== id))
+    try {
+      if (target) {
+        await logActivity(
+          'إلغاء حجز',
+          target.vehiclePlate || null,
+          target.vehicleType || null,
+          target.userName || null,
+          null,
+          'ملغى',
+          null
+        )
+      }
+    } catch (e) {
+      console.error('[useLocalData] Failed to log reservation cancellation', e)
+    }
   }
 
   return { reservations, loading, addReservation, updateReservation, deleteReservation }

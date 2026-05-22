@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Cairo } from 'next/font/google'
 import './globals.css'
+import ClientErrorCatcher from '@/components/ClientErrorCatcher'
 
 const cairo = Cairo({ 
   subsets: ['arabic', 'latin'],
@@ -20,7 +21,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ar" dir="rtl">
-      <body className={cairo.variable}>{children}</body>
+      <body className={cairo.variable}>
+        <ClientErrorCatcher />
+        {children}
+      </body>
     </html>
   )
 }
