@@ -81,6 +81,7 @@ export const initialVehicles = [
     chassisNumber: 'KMHST8ICDJU842664',
     status: null,
     available: true,
+    hidden: true,
     createdAt: new Date().toISOString()
   },
   {

@@ -11,7 +11,8 @@ export function useVehicles() {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const savedVehicles = localStorage.getItem('spc_vehicles')
-      setVehicles(savedVehicles ? JSON.parse(savedVehicles) : initialVehicles)
+      const allVehicles = savedVehicles ? JSON.parse(savedVehicles) : initialVehicles
+      setVehicles(allVehicles.filter((v: any) => !v.hidden))
     }
     setLoading(false)
   }, [])
@@ -20,7 +21,8 @@ export function useVehicles() {
   useEffect(() => {
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'spc_vehicles' && e.newValue) {
-        setVehicles(JSON.parse(e.newValue))
+        const allVehicles = JSON.parse(e.newValue)
+        setVehicles(allVehicles.filter((v: any) => !v.hidden))
       }
     }
 

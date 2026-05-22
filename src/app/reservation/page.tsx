@@ -22,7 +22,7 @@ export default function ReservationPage() {
   const currentUser = typeof window !== 'undefined' ? localStorage.getItem('spc_user') : ''
 
   const filteredVehicles = selectedVehicleType
-    ? initialVehicles.filter(v => v.type === selectedVehicleType)
+    ? initialVehicles.filter(v => v.type === selectedVehicleType && !v.hidden)
     : []
 
   const getStatusColor = (status: string | null) => {

@@ -258,7 +258,7 @@ export default function Dashboard() {
           نظرة عامة على حالة المركبات
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {vehicles.filter(v => v.status !== null).slice(0, 10).map((vehicle) => (
+          {vehicles.filter(v => v.status !== null && v.plateNumber !== '5-2547657').slice(0, 10).map((vehicle) => (
             <div
               key={vehicle.id}
               className="bg-gray-700/50 rounded-lg p-4 hover:bg-gray-600/50 hover:border-blue-500/30 border border-transparent transition-all duration-300 cursor-pointer hover:scale-105 group"
