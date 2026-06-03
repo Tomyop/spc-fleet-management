@@ -129,6 +129,27 @@ export default function ReservationPage() {
       console.error('[Reservation] Failed to log activity', err)
     }
 
+    // Send Telegram notification
+    try {
+      await fetch('/api/telegram/notify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userName: currentUser,
+          vehicleType: selectedVehicle.type,
+          vehiclePlate: selectedVehicle.plateNumber,
+          date: selectedDate,
+          time: selectedTime,
+          purpose: selectedStatus,
+        }),
+      })
+      console.log('[Reservation] Telegram notification sent')
+    } catch (err) {
+      console.error('[Reservation] Failed to send Telegram notification:', err)
+    }
+
     setToast({ message: 'تم إنشاء الحجز بنجاح!', type: 'success' })
     setTimeout(() => router.push('/dashboard'), 1500)
   }

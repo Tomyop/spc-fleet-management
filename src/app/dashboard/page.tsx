@@ -159,41 +159,7 @@ export default function Dashboard() {
         })}
       </div>
 
-      {/* Recent Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Entry/Exit */}
-        <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-gray-700 hover:border-blue-500/30 transition-all duration-300">
-          <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-            <ArrowRightLeft size={20} className="text-blue-400" />
-            آخر عمليات الدخول والخروج
-          </h3>
-          <div className="space-y-3">
-            {entries.slice(0, 5).map((entry) => (
-              <div
-                key={entry.id}
-                className="bg-gray-700/50 rounded-lg p-4 hover:bg-gray-600/50 hover:border-blue-500/30 border border-transparent transition-all duration-300 group"
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-white font-semibold group-hover:text-blue-300 transition-colors">{entry.employeeName}</p>
-                    <p className="text-gray-400 text-sm">{entry.vehiclePlate}</p>
-                  </div>
-                  <div className="text-left">
-                    <p className="text-blue-400 font-semibold">{entry.type}</p>
-                    <p className="text-gray-500 text-xs">
-                      {new Date(entry.timestamp).toLocaleDateString('ar-SA')}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-            {entries.length === 0 && (
-              <p className="text-gray-500 text-center py-4">لا توجد عمليات مسجلة</p>
-            )}
-          </div>
-        </div>
-
-        {/* Active Reservations */}
+      {/* Active Reservations */}
         <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-gray-700 hover:border-blue-500/30 transition-all duration-300">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-xl font-bold text-white flex items-center gap-2">
@@ -249,7 +215,6 @@ export default function Dashboard() {
             )}
           </div>
         </div>
-      </div>
 
       {/* Vehicles Status Overview */}
       <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-gray-700 hover:border-blue-500/30 transition-all duration-300">
